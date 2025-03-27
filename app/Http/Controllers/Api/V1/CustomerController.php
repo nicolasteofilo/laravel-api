@@ -1,24 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Resources\V1\Customer as CustomerResource;
+use App\Http\Resources\V1\CustomerCollection as CustomerResourceCollection;
 
 class CustomerController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
+     * @return CustomerResourceCollection
+    */
     public function index()
     {
-        //
+        return new CustomerResourceCollection(Customer::paginate());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
@@ -32,12 +33,10 @@ class CustomerController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Customer $customer)
     {
-        //
+        $customer = new CustomerResource($customer);
+        return $customer;
     }
 
     /**
