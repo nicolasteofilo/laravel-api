@@ -16,13 +16,13 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $filters = new InvoicesFilter();
-        $queryItems = $filters->transform($request);  // [['column', 'operator', 'value']]
+        $filterItems = $filters->transform($request);  // [['column', 'operator', 'value']]
 
-        if(count($queryItems) < 1) {
+        if(count($filterItems) < 1) {
             return new InvoiceResourceCollection(Invoice::paginate());
         }
 
-        $invoices = Invoice::where($queryItems)->paginate(10);
+        $invoices = Invoice::where($filterItems)->paginate(10);
         return new InvoiceResourceCollection($invoices->appends($request->query()));
     }
 

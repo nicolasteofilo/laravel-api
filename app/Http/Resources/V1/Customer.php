@@ -23,6 +23,7 @@ class Customer extends JsonResource
             'city' => $this->city,
             'state' => $this->state,
             'postalCode' => $this->postal_code,
+            'invoices' => Invoice::collection($this->whenLoaded('invoices')),
         ];
     }
 }

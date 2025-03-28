@@ -18,14 +18,16 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $filters = new CustomersFilter();
-        $queryItems = $filters->transform($request);  // [['column', 'operator', 'value']]
+        $filterItems = $filters->transform($request);  // [['column', 'operator', 'value']]
+        $includeInvoices = $request->query('includeInvoices');
 
-        if(count($queryItems) < 1) {
-            return new CustomerResourceCollection(Customer::paginate(10));
+        $customers = Customer::where($filterItems);
+
+        if($includeInvoices) {
+            $customers = $customers->with('invoices');
         }
 
-        $customers = Customer::where($queryItems)->paginate(10);
-        return new CustomerResourceCollection($customers->appends($request->query()));
+        return new CustomerResourceCollection($customers->paginate(10)->appends($request->query()));
     }
 
     public function create()
@@ -33,18 +35,20 @@ class CustomerController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreCustomerRequest $request)
     {
         //
     }
 
-    public function show(Customer $customer)
+    public function show(Customer $customer, Request $request)
     {
-        $customer = new CustomerResource($customer);
-        return $customer;
+        $includeInvoices = $request->query('includeInvoices');
+
+        if ($includeInvoices) {
+            $customer->loadMissing('invoices');
+        }
+
+        return new CustomerResource($customer);
     }
 
     /**
